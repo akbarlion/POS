@@ -1,0 +1,54 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<div class="col-12">
+    <div class="card">
+        <p-toolbar styleClass="mb-4 gap-2">
+            <ng-template pTemplate="left">
+                <p-button pRipple severity="success" label="Create Invoice" icon="pi pi-file" class="mr-2" />
+            </ng-template>
+            <ng-template pTemplate="right">
+                <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                    (click)="dt.exportCSV()"></button>
+            </ng-template>
+        </p-toolbar>
+        <div class="col-12" *ngIf="loadingInvoices">
+            <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+        </div>
+        <p-table #dt [value]="invoices" [rows]="10" [paginator]="true"
+            [globalFilterFields]="['id', 'invoice_id', 'user']" [tableStyle]="{ 'min-width': '75rem' }"
+            [rowHover]="true" dataKey="id"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [showCurrentPageReport]="true">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between">
+                    <h5 class="m-0">Invoice Table</h5>
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            placeholder="Search..." />
+                    </span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="invoice_id" style="width:25%">
+                        INVOICE ID <p-sortIcon field="invoice_id" />
+                    </th>
+                    <th pSortableColumn="is_paid" style="width:25%">
+                        STATUS PEMBAYARAN <p-sortIcon field="is_paid" />
+                    </th>
+                    <th pSortableColumn="user" style="width:25%">
+                        USER <p-sortIcon field="user" />
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-invoices>
+                <tr>
+                    <td>{{invoices.invoice_id}}</td>
+                    <td>{{ invoices.is_paid == 0 ? 'NO' : 'PAID' }}</td>
+                    <td>{{invoices.user}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
