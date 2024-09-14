@@ -17,6 +17,8 @@ export class InvoicesComponent {
 
   date_akhir: Date | undefined;
 
+  checkedPost: boolean
+
   constructor(
 
   ) { }
@@ -34,6 +36,10 @@ export class InvoicesComponent {
   filterByDisplay(value, filter): boolean {
     const displayValue = value === 1 ? 'PAID' : 'NO';
     return displayValue.toLowerCase().includes(filter.toLowerCase());
+  }
+
+  onChange() {
+    this.checkedPost = !this.checkedPost
   }
 
 

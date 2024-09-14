@@ -21,6 +21,7 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CalendarModule } from 'primeng/calendar';
+import { CheckboxModule } from 'primeng/checkbox';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { CalendarModule } from 'primeng/calendar';
     InputNumberModule,
     ProgressBarModule,
     CalendarModule,
+    CheckboxModule
 
   ]
 })
