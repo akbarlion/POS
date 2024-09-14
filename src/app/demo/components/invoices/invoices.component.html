@@ -4,7 +4,10 @@
     <div class="card">
         <p-toolbar styleClass="mb-4 gap-2">
             <ng-template pTemplate="left">
-                <p-button pRipple severity="success" label="Create Invoice" icon="pi pi-file" class="mr-2" />
+                <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
+                <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
+                    placeholder="Pilih Rentang Akhir" />
+                <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"></button>
             </ng-template>
             <ng-template pTemplate="right">
                 <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
@@ -14,11 +17,11 @@
         <div class="col-12" *ngIf="loadingInvoices">
             <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
         </div>
-        <p-table #dt [value]="invoices" [rows]="10" [paginator]="true"
+        <p-table #dt [value]="invoices" [rows]="10" [(selection)]="selectedCustomers" dataKey="id" [paginator]="true"
             [globalFilterFields]="['id', 'invoice_id', 'user']" [tableStyle]="{ 'min-width': '75rem' }"
             [rowHover]="true" dataKey="id"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true">
+            [showCurrentPageReport]="true" *ngIf="invoices">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
                     <h5 class="m-0">Invoice Table</h5>
@@ -31,24 +34,33 @@
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
-                    <th pSortableColumn="invoice_id" style="width:25%">
-                        INVOICE ID <p-sortIcon field="invoice_id" />
+                    <th><p-tableHeaderCheckbox /></th>
+                    <th pSortableColumn="invoice_id">
+                        INVOICE ID
+                        <p-sortIcon field="invoice_id" />
+                        <p-columnFilter type="text" field="invoice_id" display="menu" class="ml-auto" />
                     </th>
-                    <th pSortableColumn="is_paid" style="width:25%">
+                    <th pSortableColumn="is_paid">
                         STATUS PEMBAYARAN <p-sortIcon field="is_paid" />
+                        <p-columnFilter type="text" field="is_paid" display="menu" class="ml-auto" />
                     </th>
-                    <th pSortableColumn="user" style="width:25%">
+                    <th pSortableColumn="user">
                         USER <p-sortIcon field="user" />
+                        <p-columnFilter type="text" field="user" display="menu" class="ml-auto" />
                     </th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-invoices>
                 <tr>
+                    <td> <p-tableCheckbox [value]="invoices" /></td>
                     <td>{{invoices.invoice_id}}</td>
-                    <td>{{ invoices.is_paid == 0 ? 'NO' : 'PAID' }}</td>
+                    <td>{{ invoices.is_paid }}</td>
                     <td>{{invoices.user}}</td>
                 </tr>
             </ng-template>
         </p-table>
+        <div class="">
+            <button pButton pRipple label="POST DATA TO USER" [disabled]="true"></button>
+        </div>
     </div>
 </div>

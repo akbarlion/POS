@@ -17,9 +17,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TagModule } from 'primeng/tag';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { CalendarModule } from 'primeng/calendar';
 
 
 @NgModule({
@@ -46,7 +47,9 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputTextModule,
     FormsModule,
     InputNumberModule,
-    ProgressBarModule
+    ProgressBarModule,
+    CalendarModule,
+
   ]
 })
 export class InvoicesModule { }
