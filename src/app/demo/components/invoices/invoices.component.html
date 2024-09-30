@@ -13,7 +13,7 @@
                 <p-fileUpload mode="basic" accept=".xlx, .xlsx, .csv" [maxFileSize]="1000000" label="Import"
                     chooseLabel="Import" class="mr-2 inline-block" />
                 <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
-                    (click)="dt.exportCSV()"></button>
+                    (click)="exportExcel()"></button>
             </ng-template>
         </p-toolbar>
         <div class="col-12" *ngIf="loadingInvoices">
@@ -56,7 +56,7 @@
                 <tr>
                     <td> <p-tableCheckbox [value]="invoices" /></td>
                     <td>{{invoices.invoice_id}}</td>
-                    <td>{{ invoices.is_paid }}</td>
+                    <td>{{invoices.is_paid }}</td>
                     <td>{{invoices.user}}</td>
                 </tr>
             </ng-template>

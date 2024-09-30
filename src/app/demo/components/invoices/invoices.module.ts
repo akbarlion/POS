@@ -22,6 +22,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
+import { HttpClientModule } from '@angular/common/http';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 @NgModule({
@@ -50,7 +52,14 @@ import { CheckboxModule } from 'primeng/checkbox';
     InputNumberModule,
     ProgressBarModule,
     CalendarModule,
-    CheckboxModule
+    CheckboxModule,
+    TagModule,
+    //  IconFieldModule,
+    InputTextModule,
+    // InputIconModule,
+    MultiSelectModule,
+    DropdownModule,
+    HttpClientModule,
 
   ]
 })
