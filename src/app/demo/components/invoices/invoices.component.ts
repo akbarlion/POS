@@ -9,6 +9,9 @@ import * as FileSaver from 'file-saver';
   styleUrl: './invoices.component.scss'
 })
 export class InvoicesComponent {
+
+  // TESTING CHANGE SEVERITIES
+
   invoices: any[] = []
 
   loadingInvoices: boolean = false
