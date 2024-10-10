@@ -10,10 +10,14 @@
                 <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"></button>
             </ng-template>
             <ng-template pTemplate="right">
-                <p-fileUpload mode="basic" accept=".xlx, .xlsx, .csv" [maxFileSize]="1000000" label="Import"
-                    chooseLabel="Import" class="mr-2 inline-block" />
-                <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
-                    (click)="exportExcel()"></button>
+                <!-- <p-fileUpload mode="basic" url="https://www.primefaces.org/cdn/api/upload.php"
+                    accept=".xlx, .xlsx, .csv" [maxFileSize]="1000000" label="Import" chooseLabel="Import"
+                    class="mr-2 inline-block" (onUpload)="onUpload($event)" /> -->
+                <p-fileUpload mode="basic" class="mr-2 inline-block" chooseLabel="Choose" chooseIcon="pi pi-upload"
+                    name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php" accept=".xlx, .xlsx, .csv"
+                    maxFileSize="1000000" (onUpload)="onUpload($event)" />
+                <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
+                    [disabled]="!selectedCustomers || !selectedCustomers.length"></button>
             </ng-template>
         </p-toolbar>
         <div class="col-12" *ngIf="loadingInvoices">
@@ -74,3 +78,13 @@
         </p-toolbar>
     </div>
 </div>
+
+
+<p-dialog [modal]="true" [draggable]="false" [(visible)]="uploadDialog" [closable]="false" [style]="{ width: '25rem' }">
+    <ng-template pTemplate="content">
+        <div class="col-12 center" *ngIf="loadingUpload">
+            <img src="assets/images/loading_anima.gif" alt="loading">
+            <p class="text-center">Uploading Your Data ...</p>
+        </div>
+    </ng-template>
+</p-dialog>

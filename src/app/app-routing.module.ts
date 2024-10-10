@@ -14,6 +14,7 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
                     { path: 'invoices', loadChildren: () => import('./demo/components/invoices/invoices.module').then(m => m.InvoicesModule) },
                     { path: 'products', loadChildren: () => import('./demo/components/products/products.module').then(m => m.ProductsModule) },
                     { path: 'users', loadChildren: () => import('./demo/components/users/users.module').then(m => m.UsersModule) },
+                    { path: 'invoices-user', loadChildren: () => import('./demo/components/users/users.module').then(m => m.UsersModule) }
                     // { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
                     // { path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
                     // { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },

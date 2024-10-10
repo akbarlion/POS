@@ -1,7 +1,14 @@
 import { Component } from '@angular/core';
 import { Table } from 'primeng/table';
 import * as FileSaver from 'file-saver';
+import { ApiService } from '../../service/api.service';
+import { MessageService } from 'primeng/api';
 
+
+interface UploadEvent {
+  originalEvent: Event;
+  files: File[];
+}
 
 @Component({
   selector: 'app-invoices',
@@ -24,9 +31,15 @@ export class InvoicesComponent {
 
   checkedPost: boolean
 
-  constructor(
+  uploadDialog: boolean
 
-  ) { }
+  loadingUpload: boolean
+
+  constructor(
+    private api: ApiService,
+    public messageService: MessageService
+  ) {
+  }
 
   ngOnInit(): void {
     this.initialAPI()
@@ -39,6 +52,19 @@ export class InvoicesComponent {
       { id: 2, invoice_id: 'QWEOIUIOQWER', user: 'Admin', is_paid: 'PAID' },
       { id: 3, invoice_id: 'MNZXBCMNBZXC', user: 'Admin', is_paid: 'NO' },
     ];
+
+    this.get_category()
+  }
+
+
+  get_category() {
+    let category;
+    this.api.get_category().then((res: string) => {
+      category = res
+      console.log(category);
+    }).catch((error) => {
+      console.log(error);
+    })
   }
 
   filterByDisplay(value, filter): boolean {
@@ -66,6 +92,13 @@ export class InvoicesComponent {
       type: EXCEL_TYPE
     });
     FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  }
+
+
+  onUpload(event: UploadEvent) {
+    this.uploadDialog = true
+    this.loadingUpload = true
+    console.log(event);
   }
 
 

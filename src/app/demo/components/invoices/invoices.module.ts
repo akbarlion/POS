@@ -24,6 +24,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { HttpClientModule } from '@angular/common/http';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { StyleClassModule } from 'primeng/styleclass';
 
 
 @NgModule({
@@ -58,6 +59,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
     InputTextModule,
     // InputIconModule,
     MultiSelectModule,
+    StyleClassModule,
     DropdownModule,
     HttpClientModule,
 
