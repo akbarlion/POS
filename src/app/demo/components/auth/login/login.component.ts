@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { AuthService } from 'src/app/demo/service/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
 @Component({
@@ -15,9 +18,50 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 })
 export class LoginComponent {
 
-    valCheck: string[] = ['remember'];
+    username: string;
 
-    password!: string;
+    password: string;
 
-    constructor(public layoutService: LayoutService) { }
+    returnUrl = 'dashboard'
+
+    constructor(
+        public layoutService: LayoutService,
+        public auth: AuthService,
+        public messageService: MessageService,
+        public router: Router
+    ) { }
+
+    service_message(severity: string, summary: string, detail: string) {
+        this.messageService.clear();
+        this.messageService.add({ severity: severity, summary: summary, detail: detail })
+    }
+
+    login() {
+        let userlogin;
+        if (!this.username && !this.password) {
+            this.service_message('warn', 'WARN', 'Username dan Password Tidak Boleh Kosong')
+        }
+        const data = {
+            username: this.username,
+            password: this.password
+        }
+
+        this.auth.login(data).then((res: any) => {
+            userlogin = res
+            console.log(userlogin);
+
+            if (userlogin.status == 401) {
+                this.service_message('error', 'Not Found', 'Username Atau Password Salah')
+            } else if (userlogin.status == 200) {
+                localStorage.setItem("_userInfo", JSON.stringify(userlogin.data))
+                localStorage.setItem("_loginStatus", "true")
+                this.router.navigate([this.returnUrl]);
+            }
+            return
+        }).catch((error) => {
+            console.log(error);
+        })
+
+    }
+
 }

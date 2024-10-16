@@ -11,6 +11,15 @@ export class ApiService {
   ) { }
 
 
+  get_invoices() {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.get<string>(environment.url_dev + 'invoices').subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
   get_category() {
     return new Promise<string>((resolve, reject) => {
       return this.http.get<string>(environment.url_dev + 'category').subscribe({
@@ -28,4 +37,25 @@ export class ApiService {
       })
     })
   }
+
+
+  upload_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'upload', param).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  invoices_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'select-invoices', param).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+
 }

@@ -1,33 +1,34 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <div class="col-12">
+
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
+            <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
+                placeholder="Pilih Rentang Akhir" />
+            <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"
+                (click)="post_invoices(date_awal, date_akhir)"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <p-fileUpload mode="basic" name="demo[]" chooseIcon="pi pi-upload" chooseLabel="Import"
+                class="mr-2 inline-block" url="https://www.primefaces.org/cdn/api/upload.php" accept=".xlx, .xlsx, .csv"
+                maxFileSize="1000000" (onUpload)="onUpload($event)" [auto]="true" />
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
+                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+        </ng-template>
+    </p-toolbar>
+</div>
+<div class="col-12" *ngIf="loadingInvoices">
+    <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+</div>
+<div class="col-12" *ngIf="invoices && tabel">
     <div class="card">
-        <p-toolbar styleClass="mb-4 gap-2">
-            <ng-template pTemplate="left">
-                <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
-                <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
-                    placeholder="Pilih Rentang Akhir" />
-                <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"></button>
-            </ng-template>
-            <ng-template pTemplate="right">
-                <!-- <p-fileUpload mode="basic" url="https://www.primefaces.org/cdn/api/upload.php"
-                    accept=".xlx, .xlsx, .csv" [maxFileSize]="1000000" label="Import" chooseLabel="Import"
-                    class="mr-2 inline-block" (onUpload)="onUpload($event)" /> -->
-                <p-fileUpload mode="basic" class="mr-2 inline-block" chooseLabel="Choose" chooseIcon="pi pi-upload"
-                    name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php" accept=".xlx, .xlsx, .csv"
-                    maxFileSize="1000000" (onUpload)="onUpload($event)" />
-                <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
-                    [disabled]="!selectedCustomers || !selectedCustomers.length"></button>
-            </ng-template>
-        </p-toolbar>
-        <div class="col-12" *ngIf="loadingInvoices">
-            <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
-        </div>
-        <p-table #dt [value]="invoices" [rows]="10" [(selection)]="selectedCustomers" dataKey="id" [paginator]="true"
-            [globalFilterFields]="['id', 'invoice_id', 'user']" [tableStyle]="{ 'min-width': '75rem' }"
-            [rowHover]="true" dataKey="id"
+        <p-table #dt [value]="invoices" [rows]="10" [paginator]="true"
+            [globalFilterFields]="['order_id', 'produk', 'jenis_order', 'metode_pembayaran']"
+            [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selected_invoices" [rowHover]="true" dataKey="id"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true" *ngIf="invoices">
+            [showCurrentPageReport]="true" *ngIf="tabel">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
                     <h5 class="m-0">Invoice Table</h5>
@@ -37,54 +38,173 @@
                             placeholder="Search..." />
                     </span>
                 </div>
+                <p *ngIf="selected_invoices.length > 0" class="selected">Selected Items: {{ selected_invoices.length }}
+                </p>
             </ng-template>
             <ng-template pTemplate="header">
                 <tr>
                     <th><p-tableHeaderCheckbox /></th>
-                    <th pSortableColumn="invoice_id">
-                        INVOICE ID
-                        <p-sortIcon field="invoice_id" />
-                        <p-columnFilter type="text" field="invoice_id" display="menu" class="ml-auto" />
+                    <th pSortableColumn="order_id">
+                        Order ID
+                        <p-sortIcon field="order_id" />
+                        <p-columnFilter type="text" field="order_id" display="menu" class="ml-auto" />
                     </th>
-                    <th pSortableColumn="is_paid">
-                        STATUS PEMBAYARAN <p-sortIcon field="is_paid" />
-                        <p-columnFilter type="text" field="is_paid" display="menu" class="ml-auto" />
+                    <th pSortableColumn="waktu_order">
+                        Waktu Order <p-sortIcon field="waktu_order" />
+                        <p-columnFilter type="text" field="waktu_order" display="menu" class="ml-auto" />
                     </th>
-                    <th pSortableColumn="user">
-                        USER <p-sortIcon field="user" />
-                        <p-columnFilter type="text" field="user" display="menu" class="ml-auto" />
+                    <th pSortableColumn="waktu_bayar">
+                        Waktu Bayar<p-sortIcon field="waktu_bayar" />
+                        <p-columnFilter type="text" field="waktu_bayar" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="outlet">
+                        Outlet<p-sortIcon field="outlet" />
+                        <p-columnFilter type="text" field="outlet" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="kasir">
+                        Kasir<p-sortIcon field="kasir" />
+                        <p-columnFilter type="text" field="kasir" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="produk">
+                        Produk<p-sortIcon field="produk" />
+                        <p-columnFilter type="text" field="produk" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="jenis_order">
+                        Jenis Order<p-sortIcon field="jenis_order" />
+                        <p-columnFilter type="text" field="jenis_order" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="penjualan">
+                        Penjualan<p-sortIcon field="penjualan" />
+                        <p-columnFilter type="text" field="penjualan" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="tagihan">
+                        Tagihan<p-sortIcon field="tagihan" />
+                        <p-columnFilter type="text" field="tagihan" display="menu" class="ml-auto" />
+                    </th>
+                    <th pSortableColumn="metode_pembayaran">
+                        Metode Pembayaran<p-sortIcon field="metode_pembayaran" />
+                        <p-columnFilter type="text" field="metode_pembayaran" display="menu" class="ml-auto" />
                     </th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-invoices>
                 <tr>
                     <td> <p-tableCheckbox [value]="invoices" /></td>
-                    <td>{{invoices.invoice_id}}</td>
-                    <td>{{invoices.is_paid }}</td>
-                    <td>{{invoices.user}}</td>
+                    <td>{{invoices.order_id}}</td>
+                    <td>{{invoices.waktu_order }}</td>
+                    <td>{{invoices.waktu_bayar}}</td>
+                    <td>{{invoices.outlet}}</td>
+                    <td>{{invoices.kasir}}</td>
+                    <td>{{invoices.produk}}</td>
+                    <td>{{invoices.jenis_order}}</td>
+                    <td>{{invoices.penjualan}}</td>
+                    <td>{{invoices.tagihan}}</td>
+                    <td>{{invoices.metode_pembayaran}}</td>
                 </tr>
             </ng-template>
         </p-table>
-        <p-toolbar styleClass="mb-4 gap-2">
-            <ng-template pTemplate="left">
-                <button pButton pRipple label="CREATE" class="p-button-success"></button>
-                <button pButton pRipple label="DELETE" class="ml-2 p-button-danger"
-                    [disabled]="!selectedCustomers || !selectedCustomers.length"></button>
-            </ng-template>
-            <ng-template pTemplate="right">
-                <button pButton pRipple label="POST DATA TO USER"
-                    [disabled]="!selectedCustomers || !selectedCustomers.length"></button>
-            </ng-template>
-        </p-toolbar>
     </div>
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="CREATE" class="p-button-success" (click)="create_new()"></button>
+            <button pButton pRipple label="DELETE" class="ml-2 p-button-danger"
+                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <button pButton pRipple label="POST DATA TO USER"
+                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+        </ng-template>
+    </p-toolbar>
 </div>
 
 
-<p-dialog [modal]="true" [draggable]="false" [(visible)]="uploadDialog" [closable]="false" [style]="{ width: '25rem' }">
+<p-dialog [modal]="true" [draggable]="false" [(visible)]="uploadDialog" [closable]="false" [style]="{ width: '85rem' }">
     <ng-template pTemplate="content">
-        <div class="col-12 center" *ngIf="loadingUpload">
+        <div class="col-12 center" *ngIf="data_excel">
+            <div class="p-fluid col-12">
+                <p-table #dt [value]="data_excel" [rows]="10" [(selection)]="selected_data_excel" [paginator]="true"
+                    dataKey="id" [globalFilterFields]="['order_id', 'produk', 'jenis_order', 'metode_pembayaran']"
+                    [tableStyle]="{ 'min-width': '75rem' }" [rowHover]="true" responsiveLayout="scroll"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true">
+                    <ng-template pTemplate="caption">
+                        <div class="flex align-items-center justify-content-between">
+                            <h5 class="m-0">Invoice Table</h5>
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                                    placeholder="Search..." />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <!-- <th><p-tableHeaderCheckbox /></th> -->
+                            <th>No Nota</th>
+                            <th>Waktu Order</th>
+                            <th>Waktu Bayar</th>
+                            <th>Outlet</th>
+                            <th>Order</th>
+                            <th>Kasir</th>
+                            <th>Produk</th>
+                            <th>Jenis Order</th>
+                            <th>Penjualan (Rp.)</th>
+                            <th>Tagihan (Rp.)</th>
+                            <th>Metode Pembayaran</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <!-- <td><p-tableCheckbox [value]="rowData" /></td> -->
+                            <td> {{rowData.order_id}} </td>
+                            <td> {{rowData.waktu_order}} </td>
+                            <td> {{rowData.waktu_bayar}} </td>
+                            <td> {{rowData.outlet}} </td>
+                            <td> {{rowData.order}} </td>
+                            <td> {{rowData.kasir}} </td>
+                            <td> {{rowData.produk}} </td>
+                            <td> {{rowData.jenis_order}} </td>
+                            <td> {{rowData.penjualan}} </td>
+                            <td> {{rowData.tagihan}} </td>
+                            <td> {{rowData.metode_pembayaran}} </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Upload" icon="pi pi-upload" class="p-button-text"
+            (click)="upload(data_excel)"></button>
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog_upload()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="hideDialog_upload()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Create New" [modal]="true" [draggable]="false" [(visible)]="createNewDialog" [closable]="false"
+    [style]="{ width: '40rem' }">
+    <ng-template pTemplate="content">
+        <!-- <div class="col-12 center" *ngIf="loadingUpload">
             <img src="assets/images/loading_anima.gif" alt="loading">
             <p class="text-center">Uploading Your Data ...</p>
+        </div> -->
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog_create()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="hideDialog_create()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="uploadingDialog" [modal]="true" [draggable]="false" [closable]="false"
+    [style]="{ width: '40rem' }">
+    <ng-template pTemplate="content">
+        <div class="col-12 center">
+            <img src="assets/images/animation_lnikfpvk_small.gif" alt="Loading">
+            <p class="text-center">Uploading Data ...</p>
         </div>
     </ng-template>
 </p-dialog>
