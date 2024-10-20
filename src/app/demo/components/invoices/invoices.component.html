@@ -1,7 +1,6 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <div class="col-12">
-
     <p-toolbar styleClass="mb-4 gap-2">
         <ng-template pTemplate="left">
             <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
@@ -111,7 +110,7 @@
                 [disabled]="!selected_invoices || !selected_invoices.length"></button>
         </ng-template>
         <ng-template pTemplate="right">
-            <button pButton pRipple label="POST DATA TO USER"
+            <button pButton pRipple label="POST DATA TO USER" (click)="postToUser(selected_invoices)"
                 [disabled]="!selected_invoices || !selected_invoices.length"></button>
         </ng-template>
     </p-toolbar>

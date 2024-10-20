@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/demo/service/auth.service';
@@ -16,7 +16,7 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
         }
     `]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
     username: string;
 
@@ -30,6 +30,10 @@ export class LoginComponent {
         public messageService: MessageService,
         public router: Router
     ) { }
+
+    ngOnInit(): void {
+        this.auth.logout()
+    }
 
     service_message(severity: string, summary: string, detail: string) {
         this.messageService.clear();
@@ -48,12 +52,12 @@ export class LoginComponent {
 
         this.auth.login(data).then((res: any) => {
             userlogin = res
-            console.log(userlogin);
 
             if (userlogin.status == 401) {
                 this.service_message('error', 'Not Found', 'Username Atau Password Salah')
             } else if (userlogin.status == 200) {
                 localStorage.setItem("_userInfo", JSON.stringify(userlogin.data))
+                localStorage.setItem("_rolePerm", userlogin.data.role_perm)
                 localStorage.setItem("_loginStatus", "true")
                 this.router.navigate([this.returnUrl]);
             }

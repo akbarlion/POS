@@ -1,9 +1,36 @@
+// import { Component, OnInit, OnDestroy } from '@angular/core';
+// import { MenuItem } from 'primeng/api';
+// import { Subscription, debounceTime } from 'rxjs';
+// import { LayoutService } from 'src/app/layout/service/app.layout.service';
+
+// @Component({
+//     templateUrl: './dashboard.component.html',
+// })
+// export class DashboardComponent implements OnInit, OnDestroy {
+
+//     items!: MenuItem[];
+
+//     subscription!: Subscription;
+
+//     constructor(
+//         public layoutService: LayoutService) { }
+
+//     ngOnInit() {
+//     }
+
+//     ngOnDestroy() {
+//         if (this.subscription) {
+//             this.subscription.unsubscribe();
+//         }
+//     }
+// }
+
+
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Product } from '../../api/product';
-import { ProductService } from '../../service/product.service';
-import { Subscription, debounceTime } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { ApiService } from '../../service/api.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -11,90 +38,74 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 export class DashboardComponent implements OnInit, OnDestroy {
 
     items!: MenuItem[];
-
-    products!: Product[];
-
-    chartData: any;
-
-    chartOptions: any;
-
     subscription!: Subscription;
 
-    constructor(private productService: ProductService, public layoutService: LayoutService) {
-        this.subscription = this.layoutService.configUpdate$
-            .pipe(debounceTime(25))
-            .subscribe((config) => {
-                this.initChart();
-            });
+    dashboardCards = [
+        {
+            label: 'User',
+            icon: 'pi pi-user',
+            count: 6, bgClass: 'bg-cyan-100',
+            iconClass: 'text-cyan-500',
+            routerLink: '/users',
+            roles: ['admin', 'manager'],
+        },
+        {
+            label: 'Invoice',
+            icon: 'pi pi-chart-pie',
+            description: 'Cetak Invoice',
+            bgClass: 'bg-purple-100',
+            iconClass: 'text-purple-500',
+            routerLink: '/invoices',
+            roles: ['admin', 'manager'],
+        },
+        {
+            label: 'Invoice',
+            icon: 'pi pi-chart-pie',
+            description: 'Lihat Invoice',
+            bgClass: 'bg-purple-100',
+            iconClass: 'text-purple-500',
+            routerLink: '/invoices-user',
+            roles: ['admin', 'manager', 'user'],
+        }
+    ];
+
+    filteredCards = [];
+
+    total_item: any
+
+    total_today: any
+
+    constructor(
+        public layoutService: LayoutService,
+        public api: ApiService
+    ) { }
+    ngOnInit(): void {
+        const userInfo = localStorage.getItem("_userInfo");
+        if (userInfo) {
+            const parsedUserInfo = JSON.parse(userInfo);
+            const userRole = parsedUserInfo?.role_perm;
+            this.filteredCards = this.dashboardCards.filter(card => card.roles.includes(userRole));
+        }
+
+        this.get_total()
+        this.get_total_today()
+
     }
 
-    ngOnInit() {
-        this.initChart();
-        this.productService.getProductsSmall().then(data => this.products = data);
-
-        this.items = [
-            { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-            { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-        ];
+    async get_total() {
+        this.api.get_invoices().then((res: any) => {
+            this.total_item = res.count
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
-    initChart() {
-        const documentStyle = getComputedStyle(document.documentElement);
-        const textColor = documentStyle.getPropertyValue('--text-color');
-        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-
-        this.chartData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [
-                {
-                    label: 'Makanan',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--bluegray-700'),
-                    borderColor: documentStyle.getPropertyValue('--bluegray-700'),
-                    tension: .4
-                },
-                {
-                    label: 'Minuman',
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                    fill: false,
-                    backgroundColor: documentStyle.getPropertyValue('--green-600'),
-                    borderColor: documentStyle.getPropertyValue('--green-600'),
-                    tension: .4
-                }
-            ]
-        };
-
-        this.chartOptions = {
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                }
-            }
-        };
+    async get_total_today() {
+        this.api.countToday_post().then((res: any) => {
+            this.total_today = res.data
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 
     ngOnDestroy() {

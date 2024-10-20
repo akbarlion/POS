@@ -1,0 +1,101 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<div class="col-12">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
+            <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
+                placeholder="Pilih Rentang Akhir" />
+            <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"
+                (click)="post_invoices(date_awal, date_akhir)"></button>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
+                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+        </ng-template>
+    </p-toolbar>
+</div>
+<div class="col-12" *ngIf="loading">
+    <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+</div>
+<div class="col-12" *ngIf="invoices && table_user">
+    <p-table #dt [value]="invoices" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['order_id', 'produk', 'jenis_order', 'metode_pembayaran']"
+        [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selected_invoices" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true"
+        *ngIf="table_user">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Invoice Table</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                        placeholder="Search..." />
+                </span>
+            </div>
+            <p *ngIf="selected_invoices.length > 0" class="selected">Selected Items: {{ selected_invoices.length }}
+            </p>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th><p-tableHeaderCheckbox /></th>
+                <th pSortableColumn="order_id">
+                    Order ID
+                    <p-sortIcon field="order_id" />
+                    <p-columnFilter type="text" field="order_id" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="waktu_order">
+                    Waktu Order <p-sortIcon field="waktu_order" />
+                    <p-columnFilter type="text" field="waktu_order" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="waktu_bayar">
+                    Waktu Bayar<p-sortIcon field="waktu_bayar" />
+                    <p-columnFilter type="text" field="waktu_bayar" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="outlet">
+                    Outlet<p-sortIcon field="outlet" />
+                    <p-columnFilter type="text" field="outlet" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="kasir">
+                    Kasir<p-sortIcon field="kasir" />
+                    <p-columnFilter type="text" field="kasir" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="produk">
+                    Produk<p-sortIcon field="produk" />
+                    <p-columnFilter type="text" field="produk" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="jenis_order">
+                    Jenis Order<p-sortIcon field="jenis_order" />
+                    <p-columnFilter type="text" field="jenis_order" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="penjualan">
+                    Penjualan<p-sortIcon field="penjualan" />
+                    <p-columnFilter type="text" field="penjualan" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="tagihan">
+                    Tagihan<p-sortIcon field="tagihan" />
+                    <p-columnFilter type="text" field="tagihan" display="menu" class="ml-auto" />
+                </th>
+                <th pSortableColumn="metode_pembayaran">
+                    Metode Pembayaran<p-sortIcon field="metode_pembayaran" />
+                    <p-columnFilter type="text" field="metode_pembayaran" display="menu" class="ml-auto" />
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-invoices>
+            <tr>
+                <td> <p-tableCheckbox [value]="invoices" /></td>
+                <td>{{invoices.order_id}}</td>
+                <td>{{invoices.waktu_order }}</td>
+                <td>{{invoices.waktu_bayar}}</td>
+                <td>{{invoices.outlet}}</td>
+                <td>{{invoices.kasir}}</td>
+                <td>{{invoices.produk}}</td>
+                <td>{{invoices.jenis_order}}</td>
+                <td>{{invoices.penjualan}}</td>
+                <td>{{invoices.tagihan}}</td>
+                <td>{{invoices.metode_pembayaran}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -57,5 +57,32 @@ export class ApiService {
     })
   }
 
+  invoicesUser_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'select-invoices-user', param).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  uploadUser_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'upload-user', param).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  countToday_post() {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.get<string>(environment.url_dev + 'count-today').subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
 
 }

@@ -10,6 +10,8 @@ export class AppTopBarComponent {
 
     items!: MenuItem[];
 
+    user: string
+
     @ViewChild('menubutton') menuButton!: ElementRef;
 
     @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
@@ -17,4 +19,9 @@ export class AppTopBarComponent {
     @ViewChild('topbarmenu') menu!: ElementRef;
 
     constructor(public layoutService: LayoutService) { }
+
+    ngOnInit(): void {
+        this.user = JSON.parse(localStorage.getItem("_userInfo")).username
+        // this.user = userAcc ? userAcc.username : ''
+    }
 }

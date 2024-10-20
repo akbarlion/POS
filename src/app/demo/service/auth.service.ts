@@ -22,6 +22,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("_userInfo")
+    localStorage.removeItem("_rolePerm")
     localStorage.setItem("_loginStatus", "false")
   }
 }
