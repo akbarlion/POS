@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksakai_ng=self.webpackChunksakai_ng||[]).push([[547],{6547:(l,n,s)=>{s.r(n),s.d(n,{AccessModule:()=>E});var c=s(177),o=s(1141),u=s(7944),a=s(4438);let E=(()=>{class t{static{this.\u0275fac=function(M){return new(M||t)}}static{this.\u0275mod=a.$C({type:t})}static{this.\u0275inj=a.G2t({imports:[c.MD,u.AccessRoutingModule,o.tm]})}}return t})()}}]);
