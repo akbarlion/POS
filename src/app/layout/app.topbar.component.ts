@@ -1,6 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
+import { ApiService } from '../demo/service/api.service';
+import { AuthService } from '../demo/service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-topbar',
@@ -18,10 +21,19 @@ export class AppTopBarComponent {
 
     @ViewChild('topbarmenu') menu!: ElementRef;
 
-    constructor(public layoutService: LayoutService) { }
+    constructor(
+        public layoutService: LayoutService,
+        public auth: AuthService,
+        public router: Router
+    ) { }
 
     ngOnInit(): void {
         this.user = JSON.parse(localStorage.getItem("_userInfo")).username
         // this.user = userAcc ? userAcc.username : ''
+    }
+
+    logout() {
+        this.auth.logout()
+        this.router.navigate(['/'])
     }
 }

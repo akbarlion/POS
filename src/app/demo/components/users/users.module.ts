@@ -25,6 +25,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { PasswordModule } from 'primeng/password';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
     InputTextModule,
     FormsModule,
     InputNumberModule,
-    ProgressBarModule
+    ProgressBarModule,
+    PasswordModule
   ],
   providers: [
     MessageService, ConfirmationService, ProductService

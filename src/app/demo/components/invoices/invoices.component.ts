@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Table } from 'primeng/table';
 import { ApiService } from '../../service/api.service';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+
 
 
 interface UploadEvent {
@@ -50,9 +51,18 @@ export class InvoicesComponent {
 
   selectedItems: any[] = []
 
+  dateOptions = [
+    { label: 'This Month', value: 'thisMonth' },
+    { label: '2 Months Ago', value: 'twoMonthsAgo' }
+  ];
+
+  selectedDateOption: string;
+
+
   constructor(
     private api: ApiService,
-    public messageService: MessageService
+    public messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {
   }
 
@@ -67,17 +77,37 @@ export class InvoicesComponent {
   async get_invoices() {
     this.api.get_invoices().then((res: any) => {
       this.invoices = res.data
-      console.log(res);
     }).catch((err) => {
       console.log(err);
     })
   }
 
+  setDateRange(option: string) {
+    if (option === 'thisMonth') {
+      this.setToThisMonth();
+    } else if (option === 'twoMonthsAgo') {
+      this.setToTwoMonthsAgo();
+    }
+  }
+
+
+  setToThisMonth() {
+    const now = new Date();
+    this.date_awal = new Date(now.getFullYear(), now.getMonth(), 1);
+    this.date_akhir = now
+  }
+
+  setToTwoMonthsAgo() {
+    const now = new Date();
+    this.date_awal = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+    this.date_akhir = now
+  }
+
+
   service_message(severity: string, summary: string, detail: string) {
     this.messageService.clear()
     this.messageService.add({ severity: severity, summary: summary, detail: detail })
   }
-
 
   async get_category() {
     let category;
@@ -89,15 +119,17 @@ export class InvoicesComponent {
   }
 
   post_invoices(date_awal, date_akhir) {
+    if (!this.date_awal || !this.date_akhir) {
+      this.service_message('warn', 'ERROR', 'Isi Rentang Tanggal Terlebih Dahulu')
+      return
+    }
     let param_awal = new Date(this.date_awal);
     date_awal.setDate(date_awal.getDate() + 1);
     const date1 = date_awal.toISOString().split('T')[0]
-    // console.log(param_awal);
 
     let param_akhir = new Date(this.date_akhir);
     date_akhir.setDate(date_akhir.getDate() + 1);
     const date2 = date_akhir.toISOString().split('T')[0]
-    // console.log(param_akhir);
 
     let param = {
       start_date: date1,
@@ -106,12 +138,17 @@ export class InvoicesComponent {
     this.loadingInvoices = true
     this.api.invoices_post(param).then((res: any) => {
       this.invoices = res.data
+      console.log(this.invoices);
       this.tabel = true
       this.loadingInvoices = false
+      this.service_message('success', 'SUCCESS', 'Berhasil Menampilkan Data')
+      this.date_awal = null
+      this.date_akhir = null
     }).catch((err) => {
       console.log(err);
       this.tabel = false
       this.loadingInvoices = false
+      this.service_message('warn', 'ERROR', 'Tidak Ada Data Yang Ditampilkan')
     })
   }
 
@@ -223,6 +260,7 @@ export class InvoicesComponent {
       this.loadingUpload = false;
     };
     reader.readAsBinaryString(event.files[0]);
+    this.get_invoices()
   }
 
   create_new() {
@@ -255,9 +293,71 @@ export class InvoicesComponent {
       this.selected_invoices = []
     }).catch((err) => {
       console.log(err);
-      this.service_message('error', 'ERROR', 'Failed to Post!')
+      this.service_message('warn', 'Warning', 'Data Sudah Ada')
     })
   }
 
+  confirm(event: Event, params) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Do you want to delete this record?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        this.api.deleteInvoiceAdmin_post(params).then((res: any) => {
+          this.service_message('info', 'Confirmed', 'Record Telah Dihapus');
+          this.get_invoices()
+          this.selected_invoices = []
+        }).catch((err) => {
+          console.log(err);
+          this.service_message('error', 'Error', 'Gagal Menghapus Data');
+        });
+      },
+      reject: () => {
+        this.service_message('warn', 'Rejected', 'Batal Menghapus Data');
+      }
+    });
+  }
+
+  exportPdf() {
+    import('jspdf').then((jsPDF) => {
+      import('jspdf-autotable').then(() => {
+        const doc = new jsPDF.default('l', 'px', 'a4');
+
+        const headers = [
+          "Order ID", "Waktu Order", "Waktu Bayar", "Outlet", "Kasir",
+          "Produk", "Jenis Order", "Penjualan", "Tagihan", "Metode Pembayaran"
+        ];
+
+        const data = this.selected_invoices.map((product: any) => [
+          product.order_id,
+          product.waktu_order,
+          product.waktu_bayar,
+          product.outlet,
+          product.kasir,
+          product.produk,
+          product.jenis_order,
+          product.penjualan,
+          product.tagihan,
+          product.metode_pembayaran
+        ]);
+
+        (doc as any).autoTable({
+          head: [headers],
+          body: data,
+          startY: 20,
+          margin: { left: 20, right: 20 },
+          styles: { fontSize: 8 }
+        });
+
+        doc.save('products.pdf');
+      });
+    });
+  }
 
 }

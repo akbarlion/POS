@@ -33,19 +33,21 @@ export class InvoiceUserComponent {
   }
 
   async initial_API() {
+  }
 
+  service_message(severity, summary, detail) {
+    this.messageService.clear;
+    this.messageService.add({ severity: severity, summary: summary, detail: detail });
   }
 
   post_invoices(date_awal, date_akhir) {
     let param_awal = new Date(this.date_awal);
     date_awal.setDate(date_awal.getDate() + 1);
     const date1 = date_awal.toISOString().split('T')[0]
-    console.log(param_awal);
 
     let param_akhir = new Date(this.date_akhir);
     date_akhir.setDate(date_akhir.getDate() + 1);
     const date2 = date_akhir.toISOString().split('T')[0]
-    console.log(param_akhir);
 
     let param = {
       start_date: date1,
@@ -53,14 +55,17 @@ export class InvoiceUserComponent {
     }
     this.loading = true
     this.api.invoicesUser_post(param).then((res: any) => {
-      console.log(res);
       this.invoices = res.data
       this.loading = false
       this.table_user = true
+      this.date_awal = null
+      this.date_akhir = null
+      this.service_message('success', 'SUCCESS', 'Berhasil Menampilkan Data')
     }).catch((err) => {
       console.log(err);
       this.table_user = false
       this.loading = false
+      this.service_message('warn', 'ERROR', 'Tidak Ada Data Yang Ditampilkan')
     })
   }
 
@@ -74,11 +79,10 @@ export class InvoiceUserComponent {
           'Tanggal Bayar': invoice.waktu_bayar,
           'Kasir': invoice.kasir,
           'Produk': invoice.produk,
-          'Total Penjualan': invoice.penjualan,
+          'Penjualan': invoice.penjualan,
           'Metode Pembayaran': invoice.metode_pembayaran
         };
       });
-
       const worksheet = xlsx.utils.json_to_sheet(filteredData);
       const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });

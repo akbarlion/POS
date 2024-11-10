@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
 
-  url_dev: 'http://localhost/api-pos/api/'
+  // url_dev: 'http://localhost/api-pos/api/',
+  url_dev: 'https://api-production.posdhadhu.com/api/'
 
 };
 

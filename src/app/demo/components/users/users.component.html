@@ -1,65 +1,119 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
-<div class="col-12">
-    <div class="card">
-        <p-toolbar styleClass="mb-4 gap-2">
-            <ng-template pTemplate="left">
-                <p-button pRipple severity="success" label="Add User" icon="pi pi-user-plus" class="mr-2" />
-                <p-button pRipple severity="danger" label="Delete User" icon="pi pi-trash"
-                    [disabled]="!selectedUsers || !selectedUsers.length" />
-            </ng-template>
-        </p-toolbar>
-        <div class="col-12" *ngIf="loadingUsername">
-            <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
-        </div>
-        <p-table #dt [value]="users" [rows]="10" [paginator]="true"
-            [globalFilterFields]="['id', 'username', 'full_name', 'role']" [tableStyle]="{ 'min-width': '75rem' }"
-            [(selection)]="selectedUsers" [rowHover]="true" dataKey="id"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true">
-            <ng-template pTemplate="caption">
-                <div class="flex align-items-center justify-content-between">
-                    <h5 class="m-0">Manage Users</h5>
-                    <span class="p-input-icon-left">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
-                            placeholder="Search..." />
-                    </span>
-                </div>
-            </ng-template>
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 4rem">
-                        <p-tableHeaderCheckbox />
-                    </th>
-                    <th pSortableColumn="username" style="width:25%">
-                        USERNAME <p-sortIcon field="username" />
-                    </th>
-                    <th pSortableColumn="full_name" style="width:25%">
-                        NAMA <p-sortIcon field="full_name" />
-                    </th>
-                    <th pSortableColumn="role" style="width:25%">
-                        ROLE <p-sortIcon field="role" />
-                    </th>
-                    <th style="width:25%"></th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-users>
-                <tr>
-                    <td>
-                        <p-tableCheckbox [value]="users" />
-                    </td>
-                    <td>{{users.username}}</td>
-                    <td>{{users.full_name}}</td>
-                    <td>{{users.role}}</td>
-                    <td>
-                        <button pButton pRipple icon="pi pi-pencil"
-                            class="mr-2 p-button-rounded p-button-warn p-button-outlined"></button>
-                        <button pButton pRipple icon="pi pi-trash"
-                            class="ml-2 p-button-rounded p-button-danger p-button-outlined"></button>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
+<div class="col-12 card">
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <p-button pRipple severity="success" label="Add User" icon="pi pi-user-plus" class="mr-2"
+                [disabled]="!isAdmin()" (click)="create_new()" />
+            <p-button pRipple severity="danger" label="Delete User" icon="pi pi-trash"
+                [disabled]="!selectedUsers || !selectedUsers.length" />
+        </ng-template>
+    </p-toolbar>
 </div>
+<div class="col-12" *ngIf="loadingUsername">
+    <p-progressBar mode="indeterminate" [style]="{ height: '6px' }"></p-progressBar>
+</div>
+<div class="col-12 card">
+    <p-table #dt [value]="users" [rows]="10" [paginator]="true" [globalFilterFields]="['id_user', 'username']"
+        [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedUsers" [rowHover]="true" dataKey="username"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage Users</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                        placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th pSortableColumn="username">
+                    USERNAME <p-sortIcon field="username" />
+                </th>
+                <th pSortableColumn="role_perm">
+                    ROLE <p-sortIcon field="role_perm" />
+                </th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-users>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="users" />
+                </td>
+                <td>{{users.username}}</td>
+                <td>{{users.role_perm}}</td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil"
+                        class="mr-2 p-button-rounded p-button-warn p-button-outlined"
+                        (click)="update_data(users)"></button>
+                    <button pButton pRipple icon="pi pi-trash"
+                        class="ml-2 p-button-rounded p-button-danger p-button-outlined" (click)="confirm($event, users)"
+                        severity="danger" [outlined]="true"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-dialog p-dialog header="Add User" [modal]="true" [draggable]="false" [(visible)]="add_dialog" [resizable]="false"
+    [closable]="false" [style]="{ width: '40rem' }">
+    <ng-template pTemplate="content">
+        <div class="p-fluid">
+            <label for="username">
+                <h6 style="font-weight: bold;">Username</h6>
+            </label>
+            <input type="text" pInputText id="username" [(ngModel)]="username" />
+        </div>
+        <div class="p-fluid mt-3">
+            <label for="password">
+                <h6 style="font-weight: bold;">Password</h6>
+            </label>
+            <p-password [(ngModel)]="password" [toggleMask]="true" />
+        </div>
+        <div class="p-fluid mt-3">
+            <label for="Role Access">
+                <h6 style="font-weight: bold;">Role Access</h6>
+            </label>
+            <p-dropdown appendTo="body" [options]="role_access" [(ngModel)]="selectedRole" [checkmark]="true"
+                optionLabel="role_perm" [showClear]="true" placeholder="Select a Role"></p-dropdown>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="close_add_dialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="add_user()"></button>
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog p-dialog header="Edit User" [modal]="true" [draggable]="false" [(visible)]="edit_dialog" [resizable]="false"
+    [closable]="false" [style]="{ width: '40rem' }">
+    <ng-template pTemplate="content">
+        <div class="p-fluid">
+            <label for="username">
+                <h6 style="font-weight: bold;">Username</h6>
+            </label>
+            <input type="text" pInputText id="username" [(ngModel)]="data_update.username" [disabled]="true" />
+        </div>
+        <div class="p-fluid mt-3">
+            <label for="Role Access">
+                <h6 style="font-weight: bold;">Role Access</h6>
+            </label>
+            <p-dropdown appendTo="body" [options]="role_access" [(ngModel)]="data_update.role_perm" [checkmark]="true"
+                optionLabel="role_perm" [showClear]="true" placeholder="Select a Role"></p-dropdown>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="close_edit_dialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+            (click)="updating(data_update)"></button>
+    </ng-template>
+</p-dialog>

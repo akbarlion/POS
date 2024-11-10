@@ -51,8 +51,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         {
             label: 'Invoice',
-            icon: 'pi pi-chart-pie',
-            description: 'Cetak Invoice',
+            icon: 'pi pi-table',
+            description: 'Invoice Admin',
             bgClass: 'bg-purple-100',
             iconClass: 'text-purple-500',
             routerLink: '/invoices',
@@ -60,8 +60,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         {
             label: 'Invoice',
-            icon: 'pi pi-chart-pie',
-            description: 'Lihat Invoice',
+            icon: 'pi pi-table',
+            description: 'Invoice User',
             bgClass: 'bg-purple-100',
             iconClass: 'text-purple-500',
             routerLink: '/invoices-user',
@@ -75,6 +75,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     total_today: any
 
+    userRole: string
+
     constructor(
         public layoutService: LayoutService,
         public api: ApiService
@@ -85,6 +87,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             const parsedUserInfo = JSON.parse(userInfo);
             const userRole = parsedUserInfo?.role_perm;
             this.filteredCards = this.dashboardCards.filter(card => card.roles.includes(userRole));
+            this.userRole = userRole
         }
 
         this.get_total()

@@ -23,7 +23,7 @@
             <i class="pi pi-home"></i>
             <span class="mr-2">Home</span>
         </button>
-        <button pButton pRipple class="p-link layout-topbar-button" [routerLink]="'/'">
+        <button pButton pRipple class="p-link layout-topbar-button" (click)="logout()">
             <i class="pi pi-sign-out"></i>
             <span class="mr-2">Logout</span>
         </button>

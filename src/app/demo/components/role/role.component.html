@@ -1,0 +1,30 @@
+<!-- <div class="col-12 card">
+    <div class="p-fluid col-4">
+        <p-dropdown [options]="roleOptions" [(ngModel)]="selected_role" (onChange)="setRole($event.value)"
+            placeholder="Select Role" class="ml-2" appendTo="body" [showClear]="true">
+        </p-dropdown>
+    </div>
+    <div class="p-fluid">
+        <div *ngIf="accessOptions.length > 0" class="p-fluid col-8 mt-2">
+            <div *ngFor="let access of accessOptions">
+                <p-checkbox [(ngModel)]="access.checked" [label]="access.label"></p-checkbox>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="col-12 card">
+    <div class="p-fluid col-4">
+        <p-dropdown [options]="roleOptions" [(ngModel)]="selected_role" (onChange)="setRole($event.value)"
+            placeholder="Select Role" class="ml-2" appendTo="body" [showClear]="true">
+        </p-dropdown>
+    </div>
+    <div class="p-field">
+        <div *ngIf="accessOptions.length > 0" class="p-field col-8 mt-2">
+            <h3>Menu</h3>
+            <div *ngFor="let access of accessOptions" class="p-field mt-2">
+                <p-checkbox [(ngModel)]="access.checked" [label]="access.label" [binary]="true" inputId="binary"
+                    [disabled]="true"></p-checkbox>
+            </div>
+        </div>
+    </div>
+</div>

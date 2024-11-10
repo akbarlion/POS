@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
 
     login() {
         let userlogin;
-        if (!this.username && !this.password) {
+        if (!this.username || !this.password) {
             this.service_message('warn', 'WARN', 'Username dan Password Tidak Boleh Kosong')
         }
         const data = {

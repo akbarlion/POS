@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
@@ -6,6 +6,15 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ApiService {
+
+  httpOptions =
+    {
+      headers: new HttpHeaders
+        ({
+          'X-API-POS': 'P0s$#!341'
+        }),
+    };
+
   constructor(
     private http: HttpClient
   ) { }
@@ -13,7 +22,7 @@ export class ApiService {
 
   get_invoices() {
     return new Promise<string>((resolve, reject) => {
-      return this.http.get<string>(environment.url_dev + 'invoices').subscribe({
+      return this.http.get<string>(environment.url_dev + 'invoices', this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -22,7 +31,7 @@ export class ApiService {
 
   get_category() {
     return new Promise<string>((resolve, reject) => {
-      return this.http.get<string>(environment.url_dev + 'category').subscribe({
+      return this.http.get<string>(environment.url_dev + 'category', this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -31,7 +40,7 @@ export class ApiService {
 
   get_outlet() {
     return new Promise<string>((resolve, reject) => {
-      return this.http.get<string>(environment.url_dev + 'outlet').subscribe({
+      return this.http.get<string>(environment.url_dev + 'outlet', this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -41,7 +50,7 @@ export class ApiService {
 
   upload_post(param) {
     return new Promise<string>((resolve, reject) => {
-      return this.http.post<string>(environment.url_dev + 'upload', param).subscribe({
+      return this.http.post<string>(environment.url_dev + 'upload', param, this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -50,7 +59,7 @@ export class ApiService {
 
   invoices_post(param) {
     return new Promise<string>((resolve, reject) => {
-      return this.http.post<string>(environment.url_dev + 'select-invoices', param).subscribe({
+      return this.http.post<string>(environment.url_dev + 'select-invoices', param, this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -59,7 +68,7 @@ export class ApiService {
 
   invoicesUser_post(param) {
     return new Promise<string>((resolve, reject) => {
-      return this.http.post<string>(environment.url_dev + 'select-invoices-user', param).subscribe({
+      return this.http.post<string>(environment.url_dev + 'select-invoices-user', param, this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -68,7 +77,7 @@ export class ApiService {
 
   uploadUser_post(param) {
     return new Promise<string>((resolve, reject) => {
-      return this.http.post<string>(environment.url_dev + 'upload-user', param).subscribe({
+      return this.http.post<string>(environment.url_dev + 'upload-user', param, this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
@@ -77,12 +86,68 @@ export class ApiService {
 
   countToday_post() {
     return new Promise<string>((resolve, reject) => {
-      return this.http.get<string>(environment.url_dev + 'count-today').subscribe({
+      return this.http.get<string>(environment.url_dev + 'count-today', this.httpOptions).subscribe({
         next: (res) => resolve(res),
         error: (err) => reject(err)
       })
     })
   }
+
+  users_get() {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.get<string>(environment.url_dev + 'users', this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  role_get() {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.get<string>(environment.url_dev + 'role-list', this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  insertUser_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'insert-user', param, this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  updateUser_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'update-user', param, this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  deleteUser_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'delete-user', param, this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+  deleteInvoiceAdmin_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'delete-invoice-admin', param, this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
+
 
 
 }

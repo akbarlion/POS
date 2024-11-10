@@ -6,6 +6,10 @@
             <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
             <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
                 placeholder="Pilih Rentang Akhir" />
+            <!-- <button pButton pRipple class="ml-2" (click)="setToThisMonth()">This Month</button>
+            <button pButton pRipple class="ml-2" (click)="setToTwoMonthsAgo()">2 Months Ago</button> -->
+            <p-dropdown [options]="dateOptions" [(ngModel)]="selectedDateOption" (onChange)="setDateRange($event.value)"
+                placeholder="Select Date Range" class="ml-2"></p-dropdown>
             <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"
                 (click)="post_invoices(date_awal, date_akhir)"></button>
         </ng-template>
@@ -13,8 +17,10 @@
             <p-fileUpload mode="basic" name="demo[]" chooseIcon="pi pi-upload" chooseLabel="Import"
                 class="mr-2 inline-block" url="https://www.primefaces.org/cdn/api/upload.php" accept=".xlx, .xlsx, .csv"
                 maxFileSize="1000000" (onUpload)="onUpload($event)" [auto]="true" />
-            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
-                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+            <button pButton pRipple label="EXCEL" icon="pi pi-file-excel" class="p-button-success"
+                (click)="exportExcel()" [disabled]="!selected_invoices || !selected_invoices.length"></button>
+            <button pButton pRipple label="PDF" icon="pi pi-file-pdf" class="p-button-danger ml-3" (click)="exportPdf()"
+                [disabled]=" !selected_invoices || !selected_invoices.length"></button>
         </ng-template>
     </p-toolbar>
 </div>
@@ -105,9 +111,9 @@
     </div>
     <p-toolbar styleClass="mb-4 gap-2">
         <ng-template pTemplate="left">
-            <button pButton pRipple label="CREATE" class="p-button-success" (click)="create_new()"></button>
             <button pButton pRipple label="DELETE" class="ml-2 p-button-danger"
-                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+                [disabled]="!selected_invoices || !selected_invoices.length"
+                (click)="confirm($event, selected_invoices)"></button>
         </ng-template>
         <ng-template pTemplate="right">
             <button pButton pRipple label="POST DATA TO USER" (click)="postToUser(selected_invoices)"
@@ -185,10 +191,6 @@
 <p-dialog header="Create New" [modal]="true" [draggable]="false" [(visible)]="createNewDialog" [closable]="false"
     [style]="{ width: '40rem' }">
     <ng-template pTemplate="content">
-        <!-- <div class="col-12 center" *ngIf="loadingUpload">
-            <img src="assets/images/loading_anima.gif" alt="loading">
-            <p class="text-center">Uploading Your Data ...</p>
-        </div> -->
     </ng-template>
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"

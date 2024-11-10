@@ -37,9 +37,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { StyleClassModule } from 'primeng/styleclass';
 import { HttpClientModule } from '@angular/common/http';
+import { RoleComponent } from './demo/components/role/role.component';
 
 @NgModule({
-    declarations: [AppComponent, NotfoundComponent, InvoiceUserComponent],
+    declarations: [AppComponent, NotfoundComponent, InvoiceUserComponent, RoleComponent],
     imports: [
         AppRoutingModule,
         AppLayoutModule,
