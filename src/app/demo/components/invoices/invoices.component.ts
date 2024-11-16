@@ -52,6 +52,7 @@ export class InvoicesComponent {
   selectedItems: any[] = []
 
   dateOptions = [
+    { label: 'This Week', value: 'thisWeek' },
     { label: 'This Month', value: 'thisMonth' },
     { label: '2 Months Ago', value: 'twoMonthsAgo' }
   ];
@@ -72,22 +73,37 @@ export class InvoicesComponent {
 
   async initialAPI() {
     await this.get_category()
+    await this.get_invoices()
   }
 
   async get_invoices() {
     this.api.get_invoices().then((res: any) => {
       this.invoices = res.data
+      this.tabel = true
+      this.service_message('success', 'SUKSES', 'Menampilkan data yang sudah dipost ke User!')
     }).catch((err) => {
       console.log(err);
     })
   }
 
   setDateRange(option: string) {
-    if (option === 'thisMonth') {
+    if (option === 'thisWeek') {
+      this.setToThisWeek();
+    }
+    else if (option === 'thisMonth') {
       this.setToThisMonth();
     } else if (option === 'twoMonthsAgo') {
       this.setToTwoMonthsAgo();
     }
+  }
+
+  setToThisWeek() {
+    const now = new Date();
+    const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+    const lastDayOfWeek = new Date(now.setDate(firstDayOfWeek.getDate() + 6));
+
+    this.date_awal = firstDayOfWeek;
+    this.date_akhir = lastDayOfWeek;
   }
 
 
@@ -105,7 +121,7 @@ export class InvoicesComponent {
 
 
   service_message(severity: string, summary: string, detail: string) {
-    this.messageService.clear()
+    this.messageService.clear();
     this.messageService.add({ severity: severity, summary: summary, detail: detail })
   }
 
@@ -144,10 +160,14 @@ export class InvoicesComponent {
       this.service_message('success', 'SUCCESS', 'Berhasil Menampilkan Data')
       this.date_awal = null
       this.date_akhir = null
+      this.selectedDateOption = null
     }).catch((err) => {
       console.log(err);
       this.tabel = false
       this.loadingInvoices = false
+      this.date_awal = null
+      this.date_akhir = null
+      this.selectedDateOption = null
       this.service_message('warn', 'ERROR', 'Tidak Ada Data Yang Ditampilkan')
     })
   }
@@ -182,6 +202,8 @@ export class InvoicesComponent {
       const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
       this.saveAsExcelFile(excelBuffer, 'invoices');
+      this.selected_invoices = [];
+      this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
     })
   }
 
@@ -289,7 +311,7 @@ export class InvoicesComponent {
 
   postToUser(param) {
     this.api.uploadUser_post(param).then((res: any) => {
-      this.service_message('success', 'SUCCESS', 'Data Posed to User!')
+      this.service_message('success', 'SUCCESS', 'Data Berhasil Dikirimkan ke User!')
       this.selected_invoices = []
     }).catch((err) => {
       console.log(err);
@@ -356,6 +378,8 @@ export class InvoicesComponent {
         });
 
         doc.save('products.pdf');
+        this.selected_invoices = [];
+        this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
       });
     });
   }

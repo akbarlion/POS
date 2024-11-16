@@ -23,24 +23,80 @@ export class InvoiceUserComponent {
 
   selected_invoices: any[] = []
 
+  dateOptions = [
+    { label: 'This Week', value: 'thisWeek' },
+    { label: 'This Month', value: 'thisMonth' },
+    { label: '2 Months Ago', value: 'twoMonthsAgo' }
+  ];
+
+  selectedDateOption: string;
+
   constructor(
     public messageService: MessageService,
     private api: ApiService
   ) { }
 
   ngOnInit(): void {
-    this.initial_API;
+    this.initial_API();
   }
 
   async initial_API() {
+    await this.get_invoice_user()
+  }
+
+
+  async get_invoice_user() {
+    this.api.get_invoices_user().then((res: any) => {
+      this.invoices = res.data
+      this.table_user = true
+      this.service_message('success', 'SUKSES', 'Berhasil Menampilkan Data')
+    }).catch((err: any) => {
+      this.service_message('warn', 'ERROR', 'Belum Ada Data')
+    })
+  }
+
+  setDateRange(option: string) {
+    if (option === 'thisWeek') {
+      this.setToThisWeek();
+    }
+    else if (option === 'thisMonth') {
+      this.setToThisMonth();
+    } else if (option === 'twoMonthsAgo') {
+      this.setToTwoMonthsAgo();
+    }
+  }
+
+  setToThisWeek() {
+    const now = new Date();
+    const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+    const lastDayOfWeek = new Date(now.setDate(firstDayOfWeek.getDate() + 6));
+
+    this.date_awal = firstDayOfWeek;
+    this.date_akhir = lastDayOfWeek;
+  }
+
+  setToThisMonth() {
+    const now = new Date();
+    this.date_awal = new Date(now.getFullYear(), now.getMonth(), 1);
+    this.date_akhir = now
+  }
+
+  setToTwoMonthsAgo() {
+    const now = new Date();
+    this.date_awal = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+    this.date_akhir = now
   }
 
   service_message(severity, summary, detail) {
-    this.messageService.clear;
+    this.messageService.clear();
     this.messageService.add({ severity: severity, summary: summary, detail: detail });
   }
 
   post_invoices(date_awal, date_akhir) {
+    if (!this.date_awal || !this.date_akhir) {
+      this.service_message('warn', 'ERROR', 'Isi Rentang Tanggal Terlebih Dahulu')
+      return
+    }
     let param_awal = new Date(this.date_awal);
     date_awal.setDate(date_awal.getDate() + 1);
     const date1 = date_awal.toISOString().split('T')[0]
@@ -87,6 +143,8 @@ export class InvoiceUserComponent {
       const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
       this.saveAsExcelFile(excelBuffer, 'invoices');
+      this.selected_invoices = [];
+      this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
     });
   }
 
@@ -97,6 +155,41 @@ export class InvoiceUserComponent {
       type: EXCEL_TYPE
     });
     FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  }
+
+  exportPdf() {
+    import('jspdf').then((jsPDF) => {
+      import('jspdf-autotable').then(() => {
+        const doc = new jsPDF.default('l', 'px', 'a4');
+
+        const headers = [
+          "Order ID", "Tanggal Order", "Tanggal Bayar", "Kasir",
+          "Produk", "Penjualan", "Metode Pembayaran"
+        ];
+
+        const data = this.selected_invoices.map((product: any) => [
+          product.order_id,
+          product.waktu_order,
+          product.waktu_bayar,
+          product.kasir,
+          product.produk,
+          product.penjualan,
+          product.metode_pembayaran
+        ]);
+
+        (doc as any).autoTable({
+          head: [headers],
+          body: data,
+          startY: 20,
+          margin: { left: 20, right: 20 },
+          styles: { fontSize: 8 }
+        });
+
+        doc.save('products.pdf');
+        this.selected_invoices = [];
+        this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
+      });
+    });
   }
 
 

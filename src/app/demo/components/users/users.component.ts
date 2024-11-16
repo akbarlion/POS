@@ -29,8 +29,15 @@ export class UsersComponent {
 
   data_update = {
     username: null,
-    role_perm: null
+    role_perm: null,
+    description: ''
   }
+
+  roleList = [
+    { value: '5', label: 'Manager', description: 'Bisa manage seluruh data, user, dan laporan.' },
+    { value: '6', label: 'Admin', description: 'Bisa akses dan ubah data, tapi tidak bisa hapus user.' },
+    { value: '7', label: 'User', description: 'Hanya bisa lihat data tanpa akses untuk mengubah.' }
+  ];
 
   constructor(
     private messageService: MessageService,
@@ -52,6 +59,13 @@ export class UsersComponent {
     this.messageService.clear;
     this.messageService.add({ severity: severity, summary: summary, detail: detail });
   }
+
+  onRoleChange(event: any) {
+    const selectedRole = this.roleList.find(role => role.value === event.value);
+    this.data_update.description = selectedRole ? selectedRole.description : '';
+  }
+
+
 
   async get_user() {
     this.api.users_get().then((res: any) => {
@@ -76,7 +90,7 @@ export class UsersComponent {
 
   async isAdmin(): Promise<boolean> {
     const rolePerm = localStorage.getItem('_rolePerm');
-    return rolePerm === 'admin';
+    return rolePerm === 'manager';
   }
 
   generateRandomId(length: number): string {
@@ -134,8 +148,9 @@ export class UsersComponent {
   updating(params) {
     const dataUpdate = {
       username: params.username,
-      role_access_id: params.role_perm.id_access
+      role_access_id: params.role_perm
     }
+
     this.api.updateUser_post(dataUpdate).then((res: any) => {
       console.log(res);
       this.service_message('success', 'SUCCESS', 'Berhasil Update Data')

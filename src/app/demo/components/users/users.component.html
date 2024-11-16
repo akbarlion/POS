@@ -54,7 +54,7 @@
                         (click)="update_data(users)"></button>
                     <button pButton pRipple icon="pi pi-trash"
                         class="ml-2 p-button-rounded p-button-danger p-button-outlined" (click)="confirm($event, users)"
-                        severity="danger" [outlined]="true"></button>
+                        severity="danger" [outlined]="true" [disabled]="!isAdmin()"></button>
                 </td>
             </tr>
         </ng-template>
@@ -102,12 +102,22 @@
             </label>
             <input type="text" pInputText id="username" [(ngModel)]="data_update.username" [disabled]="true" />
         </div>
+
         <div class="p-fluid mt-3">
             <label for="Role Access">
                 <h6 style="font-weight: bold;">Role Access</h6>
             </label>
-            <p-dropdown appendTo="body" [options]="role_access" [(ngModel)]="data_update.role_perm" [checkmark]="true"
-                optionLabel="role_perm" [showClear]="true" placeholder="Select a Role"></p-dropdown>
+            <p-dropdown appendTo="body" [options]="roleList" [(ngModel)]="data_update.role_perm" optionLabel="label"
+                optionValue="value" [showClear]="true" placeholder="Select a Role" (onChange)="onRoleChange($event)">
+            </p-dropdown>
+        </div>
+
+        <div class="p-fluid mt-3">
+            <label for="Role Description">
+                <h6 style="font-weight: bold;">Role Description</h6>
+            </label>
+            <input type="text" pInputText id="Role Description" [(ngModel)]="data_update.description"
+                [disabled]="true" />
         </div>
     </ng-template>
     <ng-template pTemplate="footer">

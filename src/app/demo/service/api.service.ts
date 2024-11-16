@@ -29,6 +29,15 @@ export class ApiService {
     })
   }
 
+  get_invoices_user() {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.get<string>(environment.url_dev + 'invoices-user', this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
+
   get_category() {
     return new Promise<string>((resolve, reject) => {
       return this.http.get<string>(environment.url_dev + 'category', this.httpOptions).subscribe({

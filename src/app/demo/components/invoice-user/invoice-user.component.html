@@ -6,12 +6,18 @@
             <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
             <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
                 placeholder="Pilih Rentang Akhir" />
+            <p-dropdown [options]="dateOptions" [(ngModel)]="selectedDateOption" (onChange)="setDateRange($event.value)"
+                placeholder="Select Date Range" class="ml-2"></p-dropdown>
             <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"
                 (click)="post_invoices(date_awal, date_akhir)"></button>
         </ng-template>
         <ng-template pTemplate="right">
-            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
-                [disabled]="!selected_invoices || !selected_invoices.length"></button>
+            <!-- <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="exportExcel()"
+                [disabled]="!selected_invoices || !selected_invoices.length"></button> -->
+            <button pButton pRipple label="EXCEL" icon="pi pi-file-excel" class="p-button-success"
+                (click)="exportExcel()" [disabled]="!selected_invoices || !selected_invoices.length"></button>
+            <button pButton pRipple label="PDF" icon="pi pi-file-pdf" class="p-button-danger ml-3" (click)="exportPdf()"
+                [disabled]=" !selected_invoices || !selected_invoices.length"></button>
         </ng-template>
     </p-toolbar>
 </div>
