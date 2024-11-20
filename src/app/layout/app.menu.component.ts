@@ -20,8 +20,8 @@ export class AppMenuComponent implements OnInit {
                 label: 'Sales',
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['dashboard'], roles: ['admin', 'manager', 'user'] },
-                    { label: 'Invoices Admin', icon: PrimeIcons.LIST, routerLink: ['invoices'], roles: ['admin', 'manager'] },
-                    { label: 'Invoices User', icon: PrimeIcons.LIST, routerLink: ['invoices-user'], roles: ['admin', 'manager', 'user'] },
+                    { label: 'Admin Transactions', icon: PrimeIcons.LIST, routerLink: ['invoices'], roles: ['admin', 'manager'] },
+                    { label: 'User Transactions', icon: PrimeIcons.LIST, routerLink: ['invoices-user'], roles: ['admin', 'manager', 'user'] },
                     { label: 'Users', icon: 'pi pi-fw pi-users', routerLink: ['users'], roles: ['admin', 'manager'] },
                     { label: 'Role', icon: 'pi pi-fw pi-users', routerLink: ['role'], roles: ['admin', 'manager'] }
                 ]
