@@ -80,9 +80,10 @@ export class InvoicesComponent {
     this.api.get_invoices().then((res: any) => {
       this.invoices = res.data
       this.tabel = true
-      this.service_message('success', 'SUKSES', 'Menampilkan data yang sudah dipost ke User!')
+      this.service_message('success', 'SUCCESS', 'Menampilkan data yang sudah dipost ke User!')
     }).catch((err) => {
       console.log(err);
+      this.service_message('warn', 'WARNING', 'Belum ada data yang dipost ke User!')
     })
   }
 
