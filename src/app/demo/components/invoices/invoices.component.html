@@ -6,15 +6,15 @@
             <p-calendar [(ngModel)]="date_awal" placeholder="Pilih Rentang Awal" />
             <p-calendar [(ngModel)]="date_akhir" class="ml-2" [showButtonBar]="true"
                 placeholder="Pilih Rentang Akhir" />
-            <!-- <button pButton pRipple class="ml-2" (click)="setToThisMonth()">This Month</button>
-            <button pButton pRipple class="ml-2" (click)="setToTwoMonthsAgo()">2 Months Ago</button> -->
             <p-dropdown [options]="dateOptions" [(ngModel)]="selectedDateOption" (onChange)="setDateRange($event.value)"
                 placeholder="Select Date Range" class="ml-2"></p-dropdown>
             <button pButton pRipple label="Cari" icon="pi pi-fw pi-search" class="ml-2"
                 (click)="post_invoices(date_awal, date_akhir)"></button>
         </ng-template>
         <ng-template pTemplate="right">
-            <p-fileUpload mode="basic" name="demo[]" chooseIcon="pi pi-upload" chooseLabel="Import"
+            <button pButton pRipple label="DOWNLOAD TEMPLATE" icon="pi pi-file-excel" class="p-button-success mr-2"
+                (click)="downloadTemplate()"></button>
+            <p-fileUpload mode="basic" name="demo[]" chooseIcon="pi pi-upload" chooseLabel="IMPORT"
                 class="mr-2 inline-block" url="https://www.primefaces.org/cdn/api/upload.php" accept=".xlx, .xlsx, .csv"
                 maxFileSize="1000000" (onUpload)="onUpload($event)" [auto]="true" />
             <button pButton pRipple label="EXCEL" icon="pi pi-file-excel" class="p-button-success"
@@ -33,7 +33,7 @@
             [globalFilterFields]="['order_id', 'produk', 'jenis_order', 'metode_pembayaran']"
             [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selected_invoices" [rowHover]="true" dataKey="id"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [showCurrentPageReport]="true" *ngIf="tabel">
+            [showCurrentPageReport]="true" [sortField]="'order_id'" [sortOrder]="1" *ngIf="tabel">
             <ng-template pTemplate="caption">
                 <div class="flex align-items-center justify-content-between">
                     <h5 class="m-0">Invoice Table</h5>
@@ -144,7 +144,6 @@
                     </ng-template>
                     <ng-template pTemplate="header">
                         <tr>
-                            <!-- <th><p-tableHeaderCheckbox /></th> -->
                             <th>No Nota</th>
                             <th>Waktu Order</th>
                             <th>Waktu Bayar</th>
@@ -160,7 +159,6 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData>
                         <tr>
-                            <!-- <td><p-tableCheckbox [value]="rowData" /></td> -->
                             <td> {{rowData.order_id}} </td>
                             <td> {{rowData.waktu_order}} </td>
                             <td> {{rowData.waktu_bayar}} </td>
@@ -182,8 +180,6 @@
         <button pButton pRipple label="Upload" icon="pi pi-upload" class="p-button-text"
             (click)="upload(data_excel)"></button>
         <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
-            (click)="hideDialog_upload()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
             (click)="hideDialog_upload()"></button>
     </ng-template>
 </p-dialog>

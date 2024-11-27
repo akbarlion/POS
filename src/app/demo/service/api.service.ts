@@ -155,6 +155,14 @@ export class ApiService {
       })
     })
   }
+  deleteInvoiceUser_post(param) {
+    return new Promise<string>((resolve, reject) => {
+      return this.http.post<string>(environment.url_dev + 'delete-invoice-user', param, this.httpOptions).subscribe({
+        next: (res) => resolve(res),
+        error: (err) => reject(err)
+      })
+    })
+  }
 
 
 

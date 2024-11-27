@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ApiService } from '../../service/api.service';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
@@ -31,9 +31,12 @@ export class InvoiceUserComponent {
 
   selectedDateOption: string;
 
+  isAdmin: boolean
+
   constructor(
     public messageService: MessageService,
-    private api: ApiService
+    private api: ApiService,
+    private confirmationService: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -42,7 +45,14 @@ export class InvoiceUserComponent {
 
   async initial_API() {
     await this.get_invoice_user()
+    this.admin()
   }
+
+  async admin() {
+    const permit = localStorage.getItem("_rolePerm");
+    this.isAdmin = permit === 'manager' || permit === 'admin' ? true : false;
+  }
+
 
 
   async get_invoice_user() {
@@ -52,6 +62,7 @@ export class InvoiceUserComponent {
       this.service_message('success', 'SUKSES', 'Berhasil Menampilkan Data')
     }).catch((err: any) => {
       this.service_message('warn', 'ERROR', 'Belum Ada Data')
+      this.table_user = false
     })
   }
 
@@ -189,6 +200,33 @@ export class InvoiceUserComponent {
         this.selected_invoices = [];
         this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
       });
+    });
+  }
+
+  confirm(event: Event, params) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Do you want to delete this record?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        this.api.deleteInvoiceUser_post(params).then((res: any) => {
+          this.service_message('info', 'Confirmed', 'Record Telah Dihapus');
+          this.get_invoice_user();
+          this.selected_invoices = []
+        }).catch((err) => {
+          console.log(err);
+          this.service_message('error', 'Error', 'Gagal Menghapus Data');
+        });
+      },
+      reject: () => {
+        this.service_message('warn', 'Rejected', 'Batal Menghapus Data');
+      }
     });
   }
 

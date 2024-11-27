@@ -5,8 +5,6 @@
         <ng-template pTemplate="left">
             <p-button pRipple severity="success" label="Add User" icon="pi pi-user-plus" class="mr-2"
                 [disabled]="!isAdmin()" (click)="create_new()" />
-            <p-button pRipple severity="danger" label="Delete User" icon="pi pi-trash"
-                [disabled]="!selectedUsers || !selectedUsers.length" />
         </ng-template>
     </p-toolbar>
 </div>
@@ -29,9 +27,7 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th>
-                    <p-tableHeaderCheckbox />
-                </th>
+                <th></th>
                 <th pSortableColumn="username">
                     USERNAME <p-sortIcon field="username" />
                 </th>
@@ -43,9 +39,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-users>
             <tr>
-                <td>
-                    <p-tableCheckbox [value]="users" />
-                </td>
+                <td></td>
                 <td>{{users.username}}</td>
                 <td>{{users.role_perm}}</td>
                 <td>
@@ -82,7 +76,14 @@
                 <h6 style="font-weight: bold;">Role Access</h6>
             </label>
             <p-dropdown appendTo="body" [options]="role_access" [(ngModel)]="selectedRole" [checkmark]="true"
-                optionLabel="role_perm" [showClear]="true" placeholder="Select a Role"></p-dropdown>
+                optionLabel="role_perm" [showClear]="true" placeholder="Select a Role"
+                (onChange)="onRoleSelected($event)"></p-dropdown>
+        </div>
+        <div class="p-fluid mt-3">
+            <label for="Role Description">
+                <h6 style="font-weight: bold;">Role Description</h6>
+            </label>
+            <input type="text" pInputText id="Role Description" [(ngModel)]="descriptionRole" [disabled]="true" />
         </div>
     </ng-template>
     <ng-template pTemplate="footer">
@@ -111,7 +112,6 @@
                 optionValue="value" [showClear]="true" placeholder="Select a Role" (onChange)="onRoleChange($event)">
             </p-dropdown>
         </div>
-
         <div class="p-fluid mt-3">
             <label for="Role Description">
                 <h6 style="font-weight: bold;">Role Description</h6>

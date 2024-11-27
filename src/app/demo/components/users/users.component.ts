@@ -39,6 +39,8 @@ export class UsersComponent {
     { value: '7', label: 'User', description: 'Hanya bisa lihat data tanpa akses untuk mengubah.' }
   ];
 
+  descriptionRole: string
+
   constructor(
     private messageService: MessageService,
     private api: ApiService,
@@ -65,7 +67,10 @@ export class UsersComponent {
     this.data_update.description = selectedRole ? selectedRole.description : '';
   }
 
-
+  onRoleSelected(event: any) {
+    const selected = this.roleList.find(role => role.value === event.value.id_access);
+    this.descriptionRole = selected ? selected.description : ''
+  }
 
   async get_user() {
     this.api.users_get().then((res: any) => {

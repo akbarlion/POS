@@ -83,6 +83,7 @@ export class InvoicesComponent {
       this.service_message('success', 'SUCCESS', 'Menampilkan data yang sudah dipost ke User!')
     }).catch((err) => {
       console.log(err);
+      this.tabel = false
       this.service_message('warn', 'WARNING', 'Belum ada data yang dipost ke User!')
     })
   }
@@ -184,7 +185,12 @@ export class InvoicesComponent {
 
   exportExcel() {
     import('xlsx').then((xlsx) => {
-      const filteredData = this.selected_invoices.map((invoice: any) => {
+      const sortedData = this.selected_invoices.sort((a: any, b: any) => {
+        if (a.order_id < b.order_id) return -1;
+        if (a.order_id > b.order_id) return 1;
+        return 0;
+      });
+      const filteredData = sortedData.map((invoice: any) => {
         return {
           'Order ID': invoice.order_id,
           'Waktu Order': invoice.waktu_order,
@@ -197,15 +203,14 @@ export class InvoicesComponent {
           'Tagihan': invoice.tagihan,
           'Metode Pembayaran': invoice.metode_pembayaran
         };
-      })
-
+      });
       const worksheet = xlsx.utils.json_to_sheet(filteredData);
       const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
       this.saveAsExcelFile(excelBuffer, 'invoices');
       this.selected_invoices = [];
-      this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
-    })
+      this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data');
+    });
   }
 
   saveAsExcelFile(buffer: any, fileName: string): void {
@@ -283,7 +288,6 @@ export class InvoicesComponent {
       this.loadingUpload = false;
     };
     reader.readAsBinaryString(event.files[0]);
-    this.get_invoices()
   }
 
   create_new() {
@@ -303,6 +307,7 @@ export class InvoicesComponent {
     this.api.upload_post(param).then((res) => {
       this.uploadDialog = false
       this.data_excel = []
+      this.get_invoices()
       this.service_message('success', 'SUCCESS', 'Success Uploading Data')
     }).catch((error) => {
       console.log(error);
@@ -356,8 +361,12 @@ export class InvoicesComponent {
           "Order ID", "Waktu Order", "Waktu Bayar", "Outlet", "Kasir",
           "Produk", "Jenis Order", "Penjualan", "Tagihan", "Metode Pembayaran"
         ];
-
-        const data = this.selected_invoices.map((product: any) => [
+        const sortedInvoices = this.selected_invoices.sort((a: any, b: any) => {
+          if (a.order_id < b.order_id) return -1;
+          if (a.order_id > b.order_id) return 1;
+          return 0;
+        });
+        const data = sortedInvoices.map((product: any) => [
           product.order_id,
           product.waktu_order,
           product.waktu_bayar,
@@ -380,9 +389,21 @@ export class InvoicesComponent {
 
         doc.save('products.pdf');
         this.selected_invoices = [];
-        this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data')
+        this.service_message('success', 'SUCCESS', 'Berhasil Ekspor Data');
       });
     });
+  }
+
+
+  downloadTemplate() {
+    const headers = [
+      ['Order ID', 'Waktu Order', 'Waktu Bayar', 'Outlet', 'Kasir', 'Produk',
+        'Jenis Order', 'Penjualan', 'Tagihan', 'Metode Pembayaran']
+    ];
+    const worksheet = XLSX.utils.aoa_to_sheet(headers);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
+    XLSX.writeFile(workbook, 'Template.xlsx');
   }
 
 }
