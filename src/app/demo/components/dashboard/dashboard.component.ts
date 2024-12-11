@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         {
             label: 'User',
             icon: 'pi pi-user',
-            count: 6, bgClass: 'bg-cyan-100',
+            count: 4, bgClass: 'bg-cyan-100',
             iconClass: 'text-cyan-500',
             routerLink: '/users',
             roles: ['admin', 'manager'],

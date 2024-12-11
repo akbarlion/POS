@@ -395,15 +395,52 @@ export class InvoicesComponent {
   }
 
 
+  // downloadTemplate() {
+  //   const headers = [
+  //     ['Order ID', 'Waktu Order', 'Waktu Bayar', 'Outlet', 'Kasir', 'Produk',
+  //       'Jenis Order', 'Penjualan', 'Tagihan', 'Metode Pembayaran']
+  //   ];
+  //   const worksheet = XLSX.utils.aoa_to_sheet(headers);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
+  //   XLSX.writeFile(workbook, 'Template.xlsx');
+  // }
+
   downloadTemplate() {
     const headers = [
       ['Order ID', 'Waktu Order', 'Waktu Bayar', 'Outlet', 'Kasir', 'Produk',
         'Jenis Order', 'Penjualan', 'Tagihan', 'Metode Pembayaran']
     ];
-    const worksheet = XLSX.utils.aoa_to_sheet(headers);
+
+    // Tambahin data contoh dengan "contoh:" dan formatting italic
+    const data = [
+      [
+        'contoh: CS/56/240701/0001',
+        'contoh: 2024-07-01 15:20:33',
+        'contoh: 2024-07-01 15:21:58',
+        'contoh: Dhadhu Board Game Cafe',
+        'contoh: Abyan',
+        'contoh: Red Velvet,Salmon Mentai,Meeple Fries,Lemon Tea',
+        'contoh: Lainnya',
+        'contoh: Rp94.000,00',
+        'contoh: Rp0,00',
+        'contoh: Bank Transfer - QRIS'
+      ]
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet([...headers, ...data]);
+
+    // // Styling buat bikin italic di tiap cell data
+    // for (let i = 0; i < data[0].length; i++) {
+    //   const cellRef = XLSX.utils.encode_cell({ r: 1, c: i }); // Row 1 karena header di row 0
+    //   if (!worksheet[cellRef]) continue;
+    //   worksheet[cellRef].s = { font: { italic: true } }; // Tambahin styling italic
+    // }
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Template');
     XLSX.writeFile(workbook, 'Template.xlsx');
   }
+
 
 }
