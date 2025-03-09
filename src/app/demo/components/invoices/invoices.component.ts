@@ -222,6 +222,76 @@ export class InvoicesComponent {
     FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
   }
 
+  // onUpload(event: UploadEvent) {
+  //   this.uploadDialog = true;
+  //   this.uploadingDialog = true;
+  //   this.loadingUpload = true;
+
+  //   if (!event.files || event.files.length !== 1) {
+  //     console.error('Pilih file satuan, bro!');
+  //     this.uploadingDialog = false;
+  //     this.loadingUpload = false;
+  //     return;
+  //   }
+
+  //   const reader: FileReader = new FileReader();
+  //   reader.onload = (e: any) => {
+  //     const bstr: string = e.target.result;
+  //     const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+  //     const wsname: string = wb.SheetNames[0];
+  //     const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+  //     const data: any[] = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+  //     const headers: string[] = data[0];
+  //     const rows = data.slice(1);
+  //     this.data_excel = [];
+
+  //     rows.forEach((row: any) => {
+  //       if (row.length > 0) {
+  //         const noNota = row[headers.indexOf("No Nota")];
+  //         const waktuOrder = row[headers.indexOf("Waktu Order")];
+  //         const waktuBayar = row[headers.indexOf("Waktu Bayar")];
+  //         const outlet = row[headers.indexOf("Outlet")];
+  //         const order = row[headers.indexOf("Order")];
+  //         const kasir = row[headers.indexOf("Kasir")];
+  //         const jenisOrder = row[headers.indexOf("Jenis Order")];
+  //         const total = row[headers.indexOf("Penjualan (Rp.)")];
+  //         const tagihan = row[headers.indexOf("Tagihan (Rp.)")];
+  //         const metode_pembayaran = row[headers.indexOf("Metode Pembayaran")];
+  //         const produk = row[headers.indexOf("Produk")];
+
+  //         if (noNota && waktuOrder && outlet && order) {
+  //           this.data_excel.push({
+  //             "order_id": noNota,
+  //             "waktu_order": waktuOrder,
+  //             "waktu_bayar": waktuBayar,
+  //             "outlet": outlet,
+  //             "order": order,
+  //             "kasir": kasir,
+  //             "produk": produk,
+  //             "jenis_order": jenisOrder,
+  //             "penjualan": total,
+  //             "tagihan": tagihan,
+  //             "metode_pembayaran": metode_pembayaran
+  //           });
+  //         }
+  //       }
+  //       console.log(this.data_excel);
+  //     });
+
+
+  //     this.uploadingDialog = false;
+  //     this.loadingUpload = false;
+  //   };
+
+  //   reader.onerror = (error) => {
+  //     console.error('Error reading file:', error);
+  //     this.uploadingDialog = false;
+  //     this.loadingUpload = false;
+  //   };
+  //   reader.readAsBinaryString(event.files[0]);
+  // }
+
   onUpload(event: UploadEvent) {
     this.uploadDialog = true;
     this.uploadingDialog = true;
@@ -242,41 +312,74 @@ export class InvoicesComponent {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
       const data: any[] = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
+
       const headers: string[] = data[0];
+
+      const headerIndexes = {
+        noNota: headers.indexOf("Order ID"),
+        waktuOrder: headers.indexOf("Waktu Order"),
+        waktuBayar: headers.indexOf("Waktu Bayar"),
+        outlet: headers.indexOf("Outlet"),
+        order: headers.indexOf("Produk"),
+        kasir: headers.indexOf("Kasir"),
+        jenisOrder: headers.indexOf("Jenis Order"),
+        total: headers.indexOf("Penjualan"),
+        tagihan: headers.indexOf("Tagihan"),
+        metodePembayaran: headers.indexOf("Metode Pembayaran"),
+        produk: headers.indexOf("Produk"),
+      };
+
+
+      const missingHeaders = Object.keys(headerIndexes).filter(key => headerIndexes[key] === -1);
+      if (missingHeaders.length > 0) {
+        console.warn("Header yang gak ketemu:", missingHeaders);
+        this.uploadingDialog = false;
+        this.loadingUpload = false;
+        return;
+      }
+
       const rows = data.slice(1);
       this.data_excel = [];
 
-      rows.forEach((row: any) => {
+      rows.forEach((row: any, index: number) => {
         if (row.length > 0) {
-          const noNota = row[headers.indexOf("No Nota")];
-          const waktuOrder = row[headers.indexOf("Waktu Order")];
-          const waktuBayar = row[headers.indexOf("Waktu Bayar")];
-          const outlet = row[headers.indexOf("Outlet")];
-          const order = row[headers.indexOf("Order")];
-          const kasir = row[headers.indexOf("Kasir")];
-          const jenisOrder = row[headers.indexOf("Jenis Order")];
-          const total = row[headers.indexOf("Penjualan (Rp.)")];
-          const tagihan = row[headers.indexOf("Tagihan (Rp.)")];
-          const metode_pembayaran = row[headers.indexOf("Metode Pembayaran")];
-          const produk = row[headers.indexOf("Produk")];
+          const noNota = row[headerIndexes.noNota];
+          const waktuOrder = row[headerIndexes.waktuOrder];
+          const waktuBayar = row[headerIndexes.waktuBayar];
+          const outlet = row[headerIndexes.outlet];
+          const order = row[headerIndexes.order];
+          const kasir = row[headerIndexes.kasir];
+          const jenisOrder = row[headerIndexes.jenisOrder];
+          const total = row[headerIndexes.total];
+          const tagihan = row[headerIndexes.tagihan];
+          const metodePembayaran = row[headerIndexes.metodePembayaran];
+          const produk = row[headerIndexes.produk];
 
-          if (noNota && waktuOrder && outlet && order) {
-            this.data_excel.push({
-              "order_id": noNota,
-              "waktu_order": waktuOrder,
-              "waktu_bayar": waktuBayar,
-              "outlet": outlet,
-              "order": order,
-              "kasir": kasir,
-              "produk": produk,
-              "jenis_order": jenisOrder,
-              "penjualan": total,
-              "tagihan": tagihan,
-              "metode_pembayaran": metode_pembayaran
-            });
+          if (!noNota || !waktuOrder || !outlet || !order) {
+            console.warn(`Baris ${index + 1} ada yang kosong, skip!`, row);
+            return;
           }
+
+          this.data_excel.push({
+            "order_id": noNota,
+            "waktu_order": waktuOrder,
+            "waktu_bayar": waktuBayar,
+            "outlet": outlet,
+            "order": order,
+            "kasir": kasir,
+            "produk": produk,
+            "jenis_order": jenisOrder,
+            "penjualan": total,
+            "tagihan": tagihan,
+            "metode_pembayaran": metodePembayaran
+          });
         }
       });
+
+
+      if (this.data_excel.length === 0) {
+        console.warn("Gak ada data valid yang bisa diproses!");
+      }
 
       this.uploadingDialog = false;
       this.loadingUpload = false;
@@ -287,6 +390,7 @@ export class InvoicesComponent {
       this.uploadingDialog = false;
       this.loadingUpload = false;
     };
+
     reader.readAsBinaryString(event.files[0]);
   }
 
